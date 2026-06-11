@@ -1,5 +1,5 @@
 from langchain_community.vectorstores import FAISS
-from app.rag.embeddings import get_embedding_model
+from app.rag.embeddings import embedding_model
 
 VECTOR_DB_PATH = "app/rag/faiss_index"
 
@@ -10,8 +10,6 @@ def get_db():
     global _db
 
     if _db is None:
-        embedding_model = get_embedding_model()
-
         _db = FAISS.load_local(
             VECTOR_DB_PATH,
             embedding_model,

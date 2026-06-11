@@ -1,23 +1,36 @@
-import os
-from langchain_huggingface import HuggingFaceEmbeddings
-
-#token=os.getenv("HF_TOKEN")
-
-_embedding_model = None
+import numpy as np
+from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.preprocessing import normalize
 
 
-def get_embedding_model():
-    global _embedding_model
+class LocalHashingEmbeddings:
 
-    if _embedding_model is None:
-        _embedding_model = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            encode_kwargs={"normalize_embeddings": True}
+    def __init__(self):
+        self.vectorizer = HashingVectorizer(
+            n_features=384,
+            alternate_sign=False,
+            norm=None,
+            lowercase=True,
+            stop_words="english"
         )
 
-    return _embedding_model
+    def embed_documents(self, texts):
+        matrix = self.vectorizer.transform(texts)
+        matrix = normalize(matrix, norm="l2", axis=1)
+        return matrix.toarray().astype(np.float32).tolist()
+
+    def embed_query(self, text):
+        matrix = self.vectorizer.transform([text])
+        matrix = normalize(matrix, norm="l2", axis=1)
+        return matrix.toarray().astype(np.float32)[0].tolist()
+    def __call__(self, text: str) -> list:
+        return self.embed_query(text)
+
+embedding_model = LocalHashingEmbeddings()
 
 
 def embed_text(texts):
-    model = get_embedding_model()
-    return model.embed_documents(texts)
+
+    embeddings = embedding_model.embed_documents(texts)
+
+    return embeddings

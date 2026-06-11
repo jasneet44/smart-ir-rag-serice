@@ -13,7 +13,7 @@ from langchain_community.vectorstores import (
 )
 
 from app.rag.embeddings import (
-    get_embedding_model
+    embedding_model
 )
 
 
@@ -48,7 +48,6 @@ def build_vector_store():
     documents = splitter.split_documents(
         docs
     )
-    embedding_model = get_embedding_model()
     vectorstore = FAISS.from_documents(
         documents,
         embedding_model
