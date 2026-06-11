@@ -17,8 +17,21 @@ from app.rag.embeddings import (
 )
 
 
-DATA_DIR = "app/data"
-VECTOR_DB_PATH = "app/rag/faiss_index"
+BASE_DIR = os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__)
+    )
+)
+
+DATA_DIR = os.path.join(
+    BASE_DIR,
+    "data"
+)
+
+VECTOR_DB_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "faiss_index"
+)
 
 
 def build_vector_store():
